@@ -201,6 +201,18 @@ footer .fine{margin-top:48px;font:400 .62rem/1.6 var(--sans);letter-spacing:.2em
 .d1{transition-delay:.12s!important}.d2{transition-delay:.24s!important}.d3{transition-delay:.36s!important}
 @media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}*{transition:none!important}.hero video{display:none}}
 *{font-feature-settings:"lnum" 1}
+
+/* tour imersivo: o vídeo avança com o scroll */
+.tour{position:relative;height:420vh;background:#000}
+.tour .stick{position:sticky;top:0;height:100svh;overflow:hidden}
+.tour video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tour .stick::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.7))}
+.tour .cap{position:absolute;left:0;right:0;bottom:12vh;z-index:2;text-align:center;padding:0 24px;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.tour .cap.on{opacity:1;transform:none}
+.tour .cap .lbl{justify-content:center}
+.tour .cap h2{font-size:clamp(2.4rem,7vw,5.5rem);margin-top:14px;color:var(--ink,#f3eee3)}
+.tour .bar{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);z-index:3;width:0}
+.tour .hint{position:absolute;top:14vh;left:0;right:0;text-align:center;z-index:2;font:500 .7rem/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:.8;transition:opacity .4s}
 </style>
 <script>document.documentElement.classList.add('js')</script>
 </head>
@@ -211,7 +223,7 @@ footer .fine{margin-top:48px;font:400 .62rem/1.6 var(--sans);letter-spacing:.2em
 <header id="top">
   <div class="wrap">
     <a class="brand" href="#"><img src="logo.jpg" alt="Logo Top Gym Cumbuco" width="38" height="38"><span>Top Gym<small>Cumbuco</small></span></a>
-    <nav><a href="#porque">Por que</a><a href="#estrutura">Estrutura</a><a href="#turistas">Turistas</a><a href="#planos">Planos</a><a href="#avaliacoes">Avaliações</a><a href="#local">Localização</a></nav>
+    <nav><a href="#tour">Tour</a><a href="#porque">Por que</a><a href="#estrutura">Estrutura</a><a href="#turistas">Turistas</a><a href="#planos">Planos</a><a href="#avaliacoes">Avaliações</a><a href="#local">Localização</a></nav>
     <a class="hcta" href="https://wa.me/5585982361153?text=Ol%C3%A1!%20Vi%20o%20site%20da%20Top%20Gym%20Cumbuco%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20planos.%20Pode%20me%20ajudar%3F">WhatsApp</a>
   </div>
 </header>
@@ -234,6 +246,8 @@ footer .fine{margin-top:48px;font:400 .62rem/1.6 var(--sans);letter-spacing:.2em
     </div>
   </div>
 </section>
+<section class="tour" id="tour"><div class="stick"><video muted playsinline preload="auto" src="tour.mp4"></video><div class="hint">Role para entrar ↓</div><div class="cap"><span class="lbl">Tour pela academia</span><h2>Entre na <em>Top Gym</em></h2></div><div class="cap"><span class="lbl">Térreo</span><h2>Ferro, pesos <em>livres</em></h2></div><div class="cap"><span class="lbl">Térreo</span><h2>Espelhos, luz e <em>espaço</em></h2></div><div class="cap"><span class="lbl">Andar de cima</span><h2>Suba para o <em>próximo nível</em></h2></div><div class="bar"></div></div></section>
+
 
 <div class="disc" aria-label="Modalidades"><div class="wrap"><span>Musculação</span><span>Crossfit</span><span>Aeróbico</span><span>Kitesurf</span><span>Cumbuco</span></div></div>
 
@@ -364,6 +378,14 @@ addEventListener('load',()=>{chk();setTimeout(chk,300)});addEventListener('hashc
 const h=document.querySelector('header');
 const sc=()=>h.classList.toggle('sc',scrollY>40);sc();
 addEventListener('scroll',sc,{passive:true});
+</script>
+<script>
+(()=>{const t=document.getElementById('tour');if(!t)return;const v=t.querySelector('video'),caps=t.querySelectorAll('.cap'),bar=t.querySelector('.bar'),hint=t.querySelector('.hint');let goal=0,cur=0,ready=false;
+v.addEventListener('loadedmetadata',()=>{ready=true});v.load();
+const prog=()=>{const r=t.getBoundingClientRect(),h=t.offsetHeight-innerHeight;return Math.min(1,Math.max(0,-r.top/h))};
+const tick=()=>{const p=prog();if(ready&&v.duration){goal=p*(v.duration-.05);cur+=(goal-cur)*.18;if(Math.abs(v.currentTime-cur)>.02)v.currentTime=cur}
+bar.style.width=(p*100)+'%';hint.style.opacity=p>.03?0:.8;const i=Math.min(caps.length-1,Math.floor(p*caps.length));caps.forEach((c,k)=>c.classList.toggle('on',k===i&&p>.02&&p<.995));requestAnimationFrame(tick)};
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){v.autoplay=true;v.loop=true;v.play().catch(()=>{});caps[0].classList.add('on')}else requestAnimationFrame(tick)})();
 </script>
 </body>
 </html>
